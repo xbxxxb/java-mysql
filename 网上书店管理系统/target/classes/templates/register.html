@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>注册新用户 - 网上书店</title>
+    <style>
+        body {
+            background: #CCF0F1;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .register-container {
+            background: #77CDCE;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            width: 360px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #FDBAD0;
+            font-weight: 700;
+        }
+        label {
+            display: block;
+            margin-bottom: 15px;
+            color: white;
+            font-size: 14px;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color:#FDBAD0;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #CCF0F1;
+        }
+        .back-login {
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+            color: #FDBAD0;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <h2 >注册新用户</h2>
+    <form action="/users/saves" method="post" th:object="${userForm}">
+        <label>
+            用户名:
+            <input type="text" th:field="*{username}" required />
+        </label>
+        <label>
+            密码:
+            <input type="password" th:field="*{password}" required />
+        </label>
+        <label>
+            全名:
+            <input type="text" th:field="*{fullName}" required />
+        </label>
+        <label>
+            手机号:
+            <input type="tel" th:field="*{phoneNumber}" />
+        </label>
+        <label>
+            邮箱:
+            <input type="email" th:field="*{email}" />
+        </label>
+        <button type="submit">注册</button>
+    </form>
+    <div class="back-login" onclick="window.location.href='/login'">返回登录</div>
+</div>
+</body>
+</html>

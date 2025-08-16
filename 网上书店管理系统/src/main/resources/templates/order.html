@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>订单管理</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #c2d4d6;
+            color: #333;
+        }
+
+        h1, h2 {
+            color: #398d37;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #98ccbb;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 30px 0 20px;
+        }
+
+        h3 {
+            color: #329363;
+            font-size: 1.4rem;
+            margin: 20px 0 15px;
+        }
+
+        .top-nav {
+            margin-bottom: 25px;
+        }
+
+        .top-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #398d37;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .top-nav a:hover {
+            background-color: #68a530;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #98ccbb;
+        }
+
+        label {
+            font-weight: 600;
+            color: #329363;
+            margin-right: 15px;
+            display: inline-block;
+            width: 100px;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            padding: 10px;
+            margin: 8px 0 15px;
+            width: 300px;
+            border: 1px solid #98ccbb;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        select:focus, input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #68a530;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(104, 165, 48, 0.2);
+        }
+
+        table {
+            width: 100%;
+            background: white;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        thead {
+            background-color: #329363;
+            color: white;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tbody tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #68a530;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #398d37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.5);
+            margin: 0;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            text-align: center;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #98ccbb, transparent);
+            margin: 30px 0;
+        }
+
+        .book-select-table th {
+            background-color: #68a530;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <a th:href="@{/}">← 返回首页</a>
+</div>
+
+<h1>📦 创建新订单</h1>
+
+<form th:action="@{/orders/save}" method="post">
+    <div>
+        <label for="userId">用户：</label>
+        <select id="userId" name="userId" required>
+            <option th:each="user : ${userList}" th:value="${user.id}" th:text="${user.username}"></option>
+        </select>
+    </div>
+
+    <div>
+        <label for="shippingAddress">收货地址：</label>
+        <input type="text" id="shippingAddress" name="shippingAddress" required/>
+    </div>
+
+    <div>
+        <label for="paymentMethod">支付方式：</label>
+        <select id="paymentMethod" name="paymentMethod" required>
+            <option value="在线支付">在线支付</option>
+            <option value="货到付款">货到付款</option>
+        </select>
+    </div>
+
+    <div>
+        <label for="status">订单状态：</label>
+        <select id="status" name="status" required>
+            <option value="PENDING">待处理</option>
+            <option value="PAID">已付款</option>
+            <option value="SHIPPED">已发货</option>
+            <option value="DELIVERED">已送达</option>
+        </select>
+    </div>
+
+    <h3>📚 选择图书和数量</h3>
+    <table class="book-select-table">
+        <thead>
+        <tr>
+            <th>选择</th>
+            <th>书名</th>
+            <th>作者</th>
+            <th>现价</th>
+            <th>库存</th>
+            <th>数量</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${bookList}">
+            <td>
+                <input type="checkbox" th:name="'book_' + ${book.id}" th:value="${book.id}" />
+            </td>
+            <td th:text="${book.title}"></td>
+            <td th:text="${book.author}"></td>
+            <td th:text="${book.currentPrice}"></td>
+            <td th:text="${book.stock}"></td>
+            <td>
+                <input type="number" th:name="'quantity_' + ${book.id}" min="1" value="1"
+                       th:max="${book.stock}" />
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 25px;">
+        <button type="submit">提交订单</button>
+    </div>
+</form>
+
+<hr/>
+
+<h2>📋 订单列表</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>用户</th>
+        <th>金额</th>
+        <th>状态</th>
+        <th>时间</th>
+        <th>支付方式</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="order : ${orderList}">
+        <td th:text="${order.id}"></td>
+        <td th:text="${order.user.username}"></td>
+        <td th:text="${order.totalAmount}"></td>
+        <td th:text="${order.status}"></td>
+        <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${order.paymentMethod}"></td>
+        <td>
+            <form th:action="@{/orders/delete/{id}(id=${order.id})}" method="post"
+                  onsubmit="return confirm('确认删除该订单？');" style="margin: 0;">
+                <button type="submit" class="delete-btn">删除</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

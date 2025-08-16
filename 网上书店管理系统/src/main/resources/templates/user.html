@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>用户管理</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #c2d4d6;
+            color: #333;
+        }
+        .top-nav {
+            margin-bottom: 25px;
+        }
+        .top-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #398d37;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .top-nav a:hover {
+            background-color: #68a530;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            color: #398d37;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #98ccbb;
+        }
+        h2 {
+            color: #329363;
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+        }
+
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            border: 1px solid #98ccbb;
+        }
+        form label {
+            display: inline-block;
+            width: 90px;
+            font-weight: 600;
+            color: #329363;
+            margin-bottom: 8px;
+        }
+        form input {
+            width: 280px;
+            padding: 10px 12px;
+            margin-bottom: 15px;
+            border: 1px solid #98ccbb;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        form input:focus {
+            border-color: #68a530;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(104, 165, 48, 0.2);
+        }
+        form button {
+            padding: 12px 25px;
+            background-color: #68a530;
+            color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        form button:hover {
+            background-color: #398d37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        thead {
+            background-color: #329363;
+            color: white;
+            font-weight: bold;
+        }
+        th, td {
+            padding: 14px 16px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+        tbody tr:hover {
+            background-color: #e8f5e9;
+        }
+        a.action-link {
+            color: #329363;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 8px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        a.action-link:hover {
+            color: white;
+            background-color: #68a530;
+            text-decoration: none;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #98ccbb, transparent);
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <a th:href="@{/}">← 返回首页</a>
+</div>
+
+<h1>👤 用户管理</h1>
+
+<form th:action="@{/users/save}" method="post" th:object="${userForm}">
+    <input type="hidden" th:field="*{id}" />
+
+    <label for="username">用户名：</label>
+    <input type="text" id="username" th:field="*{username}" placeholder="请输入用户名" required />
+    <br/>
+
+    <label for="password">密码：</label>
+    <input type="password" id="password" name="password"
+           placeholder="修改时可留空，不修改密码" />
+    <br/>
+
+    <label for="fullName">姓名：</label>
+    <input type="text" id="fullName" th:field="*{fullName}" placeholder="请输入姓名" />
+    <br/>
+
+    <label for="phoneNumber">电话：</label>
+    <input type="text" id="phoneNumber" th:field="*{phoneNumber}" placeholder="请输入电话号码" />
+    <br/>
+
+    <label for="email">邮箱：</label>
+    <input type="email" id="email" th:field="*{email}" placeholder="请输入邮箱地址" />
+    <br/>
+
+    <button type="submit" th:text="${userForm.id == null} ? '添加用户' : '更新用户'">添加用户</button>
+</form>
+
+<hr/>
+
+<h2>📋 用户列表</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>用户名</th>
+        <th>姓名</th>
+        <th>电话</th>
+        <th>邮箱</th>
+        <th>注册时间</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${userList}">
+        <td th:text="${user.id}">1</td>
+        <td th:text="${user.username}">username</td>
+        <td th:text="${user.fullName}">Full Name</td>
+        <td th:text="${user.phoneNumber}">123456789</td>
+        <td th:text="${user.email}">email@example.com</td>
+        <td th:text="${#dates.format(user.registrationDate, 'yyyy-MM-dd')}">2025-06-24</td>
+        <td>
+            <a class="action-link" th:href="@{/users(editId=${user.id})}">编辑</a>
+            <a class="action-link" th:href="@{'/users/delete/' + ${user.id}}"
+               onclick="return confirm('确认删除该用户吗？');">删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

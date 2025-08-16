@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>用户登录 - 网上书店</title>
+    <style>
+        body {
+            background: url('/images/chun.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background: #BAF1B3;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            width: 320px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 25px;
+            color: #FF9293;
+            font-weight: 600;
+        }
+        label {
+            display: block;
+            margin-bottom: 15px;
+            color: #FCD4DF;
+            font-size: 17px;
+            text-align: left;
+        }
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            border-color: #BAF1B3;
+            outline: none;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #FDBAD0;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #FFCCDC;
+        }
+        .register-btn {
+            background-color: #C4B6F2;
+        }
+        .register-btn:hover {
+            background-color: #EAC3DE;
+        }
+        .error-message {
+            color: #d93025;
+            font-size: 13px;
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>用户登录</h2>
+    <form action="/login" method="post">
+        <label>
+            用户名:
+            <input type="text" name="username" required />
+        </label>
+        <label>
+            密码:
+            <input type="password" name="password" required />
+        </label>
+        <label>
+            角色:
+            <select name="role">
+                <option value="ADMIN">管理员</option>
+                <option value="USER">普通用户</option>
+            </select>
+        </label>
+        <button type="submit">登录</button>
+    </form>
+    <button class="register-btn" onclick="window.location.href='/users/register'">注册新用户</button>
+    <div class="error-message" th:if="${error}" th:text="${error}"></div>
+</div>
+</body>
+</html>

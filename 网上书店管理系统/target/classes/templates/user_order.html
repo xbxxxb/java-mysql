@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>📦 我的订单 - 网上书店</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #c2d4d6, #98ccbb);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #398d37;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #68a530, #329363);
+            border-radius: 3px;
+        }
+
+        .top-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .top-buttons button,
+        .top-buttons a {
+            padding: 12px 24px;
+            font-size: 15px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .top-buttons button {
+            background: linear-gradient(to right, #80bc6b, #329363);
+            color: #fff;
+        }
+
+        .top-buttons button:hover {
+            background: linear-gradient(to right, #68a530, #2d7742);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .top-buttons a {
+            background: linear-gradient(to right, #c2d4d6, #98ccbb);
+            color: #333;
+        }
+
+        .top-buttons a:hover {
+            background: linear-gradient(to right, #b0c8cb, #84c0a8);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .section {
+            background: rgba(255,255,255,0.95);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        thead {
+            background: linear-gradient(to right, #68a530, #398d37);
+            color: white;
+        }
+
+        th, td {
+            padding: 14px 12px;
+            border: 1px solid rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: rgba(152,204,187,0.1);
+        }
+
+        tr:hover {
+            background-color: rgba(152,204,187,0.2);
+        }
+
+        .empty-msg {
+            text-align: center;
+            font-size: 16px;
+            color: #68a530;
+            padding: 30px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px auto;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 15px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-buttons {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .top-buttons button,
+            .top-buttons a {
+                width: 100%;
+                text-align: center;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📦 我的订单</h1>
+
+    <div class="top-buttons">
+        <button onclick="location.href='/user/user_index'">⬅ 返回首页</button>
+        <a th:href="@{/login}">🏠 退出登录</a>
+    </div>
+
+    <div class="section">
+        <table>
+            <thead>
+            <tr>
+                <th>订单编号</th>
+                <th>订单金额（元）</th>
+                <th>订单状态</th>
+                <th>下单时间</th>
+            </tr>
+            </thead>
+            <tbody th:if="${orderList != null and !orderList.isEmpty()}">
+            <tr th:each="order : ${orderList}">
+                <td th:text="${order.id}">10001</td>
+                <td th:text="${order.totalAmount != null ? order.totalAmount : '0.00'}">99.99</td>
+                <td th:text="${order.status != null ? order.status : '未知'}">已支付</td>
+                <td th:text="${order.orderDate != null ? #dates.format(order.orderDate, 'yyyy-MM-dd HH:mm') : '无'}">2025-06-25 14:00</td>
+            </tr>
+            </tbody>
+            <tbody th:unless="${orderList != null and !orderList.isEmpty()}">
+            <tr>
+                <td colspan="4" class="empty-msg">您当前暂无订单记录</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>

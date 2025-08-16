@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>供应商管理</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #c2d4d6;
+            color: #333;
+        }
+
+        h1 {
+            color: #398d37;
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #98ccbb;
+        }
+
+        .top-nav {
+            margin-bottom: 25px;
+        }
+        .top-nav a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #398d37;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .top-nav a:hover {
+            background-color: #68a530;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 25px 0;
+        }
+
+        thead {
+            background-color: #329363;
+            color: white;
+            font-weight: bold;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tbody tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        a.action-link {
+            color: #329363;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 8px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        a.action-link:hover {
+            color: white;
+            background-color: #68a530;
+            text-decoration: none;
+        }
+
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 30px 0;
+            border: 1px solid #98ccbb;
+        }
+
+        h2 {
+            color: #329363;
+            font-size: 1.8rem;
+            margin: 0 0 20px 0;
+        }
+
+        label {
+            display: inline-block;
+            width: 120px;
+            font-weight: 600;
+            color: #329363;
+            margin-bottom: 8px;
+            vertical-align: top;
+        }
+
+        input, textarea {
+            width: 70%;
+            padding: 10px 12px;
+            margin-bottom: 15px;
+            border: 1px solid #98ccbb;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #68a530;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(104, 165, 48, 0.2);
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #68a530;
+            color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-right: 15px;
+        }
+
+        button:hover {
+            background-color: #398d37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        button.secondary {
+            background-color: #98ccbb;
+        }
+
+        button.secondary:hover {
+            background-color: #80bc6b;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🏢 供应商管理</h1>
+<div class="top-nav">
+    <a href="/">← 返回首页</a>
+</div>
+
+<!-- 供应商列表 -->
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>名称</th>
+        <th>联系人</th>
+        <th>电话</th>
+        <th>邮箱</th>
+        <th>地址</th>
+        <th>信用评级</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 通过 JS 动态加载 -->
+    </tbody>
+</table>
+
+<!-- 新增/编辑供应商表单 -->
+<h2 id="form-title">新增供应商</h2>
+<form id="supplier-form">
+    <input type="hidden" id="supplier-id" />
+    <div>
+        <label for="name">名称:</label>
+        <input type="text" id="name" required />
+    </div>
+    <div>
+        <label for="contactPerson">联系人:</label>
+        <input type="text" id="contactPerson" />
+    </div>
+    <div>
+        <label for="phoneNumber">电话:</label>
+        <input type="text" id="phoneNumber" />
+    </div>
+    <div>
+        <label for="email">邮箱:</label>
+        <input type="email" id="email" />
+    </div>
+    <div>
+        <label for="companyAddress">地址:</label>
+        <input type="text" id="companyAddress" />
+    </div>
+    <div>
+        <label for="creditRating">信用评级:</label>
+        <input type="number" id="creditRating" min="0" max="10" />
+    </div>
+    <div style="margin-top: 25px;">
+        <button type="submit">保存</button>
+        <button type="button" id="reset-btn" class="secondary">重置</button>
+    </div>
+</form>
+
+<script>
+    const form = document.getElementById('supplier-form');
+    const resetBtn = document.getElementById('reset-btn');
+    const formTitle = document.getElementById('form-title');
+    const tbody = document.querySelector('tbody');
+
+    // 加载初始供应商列表
+    async function loadSuppliers() {
+        try {
+            const res = await fetch('/api/suppliers');
+            if (!res.ok) throw new Error('加载失败');
+            const suppliers = await res.json();
+            tbody.innerHTML = '';
+            suppliers.forEach(s => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${s.id}</td>
+                    <td>${s.name}</td>
+                    <td>${s.contactPerson || '-'}</td>
+                    <td>${s.phoneNumber || '-'}</td>
+                    <td>${s.email || '-'}</td>
+                    <td>${s.companyAddress || '-'}</td>
+                    <td>${s.creditRating || '-'}</td>
+                    <td>
+                        <a href="#" data-id="${s.id}" class="action-link edit-btn">编辑</a>
+                        <a href="#" data-id="${s.id}" class="action-link delete-btn">删除</a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            attachEventHandlers();
+        } catch (e) {
+            alert('加载供应商失败：' + e.message);
+        }
+    }
+
+    // 重置表单
+    resetBtn.onclick = () => {
+        form.reset();
+        formTitle.textContent = '新增供应商';
+        document.getElementById('supplier-id').value = ''; // 关键：清空隐藏id
+    };
+
+    // 绑定编辑和删除按钮事件
+    function attachEventHandlers() {
+        document.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.onclick = async e => {
+                e.preventDefault();
+                const id = btn.getAttribute('data-id');
+                try {
+                    const res = await fetch(`/api/suppliers/${id}`);
+                    if (!res.ok) throw new Error('获取失败');
+                    const s = await res.json();
+                    document.getElementById('supplier-id').value = s.id;
+                    document.getElementById('name').value = s.name || '';
+                    document.getElementById('contactPerson').value = s.contactPerson || '';
+                    document.getElementById('phoneNumber').value = s.phoneNumber || '';
+                    document.getElementById('email').value = s.email || '';
+                    document.getElementById('companyAddress').value = s.companyAddress || '';
+                    document.getElementById('creditRating').value = s.creditRating || '';
+                    formTitle.textContent = '编辑供应商';
+                } catch (e) {
+                    alert('加载供应商信息失败：' + e.message);
+                }
+            };
+        });
+
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.onclick = async e => {
+                e.preventDefault();
+                if (!confirm('确定删除该供应商？')) return;
+                const id = btn.getAttribute('data-id');
+                try {
+                    const res = await fetch(`/api/suppliers/${id}`, { method: 'DELETE' });
+                    if (!res.ok) throw new Error('删除失败');
+                    alert('删除成功');
+                    loadSuppliers();
+                } catch (e) {
+                    alert('删除失败：' + e.message);
+                }
+            };
+        });
+    }
+
+    // 提交表单事件：新增或编辑
+    form.onsubmit = async e => {
+        e.preventDefault();
+        const id = document.getElementById('supplier-id').value.trim();
+        const supplierData = {
+            name: document.getElementById('name').value,
+            contactPerson: document.getElementById('contactPerson').value,
+            phoneNumber: document.getElementById('phoneNumber').value,
+            email: document.getElementById('email').value,
+            companyAddress: document.getElementById('companyAddress').value,
+            creditRating: parseInt(document.getElementById('creditRating').value) || 0
+        };
+
+        // 只有编辑时才传id
+        if (id) {
+            supplierData.id = parseInt(id);
+        }
+
+        try {
+            let res;
+            if (id) {
+                // 编辑供应商
+                res = await fetch(`/api/suppliers/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(supplierData)
+                });
+            } else {
+                // 新增供应商
+                res = await fetch('/api/suppliers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(supplierData)
+                });
+            }
+
+            if (!res.ok) throw new Error('保存失败');
+
+            alert('保存成功');
+            form.reset();
+            formTitle.textContent = '新增供应商';
+            document.getElementById('supplier-id').value = '';
+            loadSuppliers();
+        } catch (e) {
+            alert('保存失败：' + e.message);
+        }
+    };
+
+    // 页面初始化加载供应商列表
+    loadSuppliers();
+</script>
+
+</body>
+</html>

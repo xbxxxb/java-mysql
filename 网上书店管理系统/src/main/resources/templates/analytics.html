@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>数据分析</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #c2d4d6;
+            color: #333;
+        }
+
+        h1 {
+            color: #398d37;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #98ccbb;
+        }
+
+        h2 {
+            color: #329363;
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+        }
+
+        .top-buttons {
+            margin-bottom: 25px;
+        }
+
+        .top-buttons a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #398d37;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .top-buttons a:hover {
+            background-color: #68a530;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .analytics-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #98ccbb;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        thead {
+            background-color: #329363;
+            color: white;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tbody tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📊 图书商城数据分析</h1>
+<div class="top-buttons">
+    <a th:href="@{/}">🏠 返回首页</a>
+</div>
+
+<div class="analytics-section">
+    <h2>销售汇总</h2>
+    <table id="sales-summary-table">
+        <thead>
+        <tr><th>总销售额</th><th>订单数量</th><th>平均订单金额</th></tr>
+        </thead>
+        <tbody>
+        <tr><td colspan="3" class="loading">加载数据中...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="analytics-section">
+    <h2>畅销图书 Top10</h2>
+    <table id="top-books-table">
+        <thead>
+        <tr><th>ID</th><th>书名</th><th>作者</th><th>销量</th><th>单价</th></tr>
+        </thead>
+        <tbody>
+        <tr><td colspan="5" class="loading">加载数据中...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="analytics-section">
+    <h2>用户统计</h2>
+    <table id="user-stat-table">
+        <thead>
+        <tr><th>总用户数</th><th>活跃用户数</th><th>近30天注册</th><th>活跃率 (%)</th></tr>
+        </thead>
+        <tbody>
+        <tr><td colspan="4" class="loading">加载数据中...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="analytics-section">
+    <h2>库存状态</h2>
+    <table id="stock-table">
+        <thead>
+        <tr><th>图书总数</th><th>低库存图书</th><th>缺货图书</th><th>平均库存</th></tr>
+        </thead>
+        <tbody>
+        <tr><td colspan="4" class="loading">加载数据中...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="analytics-section">
+    <h2>分类表现</h2>
+    <table id="category-table">
+        <thead>
+        <tr><th>分类</th><th>图书数量</th><th>总销量</th><th>总收入</th></tr>
+        </thead>
+        <tbody>
+        <tr><td colspan="4" class="loading">加载数据中...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    async function fetchAndFill(url, handler) {
+        try {
+            const res = await fetch(url);
+            if (!res.ok) throw new Error('数据加载失败');
+            const data = await res.json();
+            handler(data);
+        } catch (error) {
+            console.error('获取数据出错:', error);
+            document.querySelector(`#${url.split('/').pop()} tbody`).innerHTML =
+                `<tr><td colspan="4" style="color:#e74c3c">${error.message}</td></tr>`;
+        }
+    }
+
+    fetchAndFill('/api/analytics/sales-summary', data => {
+        const tr = `<tr>
+            <td class="highlight">￥${data.totalSales.toLocaleString()}</td>
+            <td>${data.totalOrders.toLocaleString()}</td>
+            <td>￥${data.averageOrderValue.toFixed(2)}</td>
+        </tr>`;
+        document.querySelector('#sales-summary-table tbody').innerHTML = tr;
+    });
+
+    fetchAndFill('/api/analytics/top-selling-books', list => {
+        document.querySelector('#top-books-table tbody').innerHTML =
+            list.map((b, index) => `<tr>
+                <td>${b.id}</td>
+                <td>${b.title}</td>
+                <td>${b.author}</td>
+                <td class="${index < 3 ? 'highlight' : ''}">${b.salesCount.toLocaleString()}</td>
+                <td>￥${b.currentPrice.toFixed(2)}</td>
+            </tr>`).join('');
+    });
+
+    fetchAndFill('/api/analytics/user-statistics', data => {
+        const tr = `<tr>
+            <td>${data.totalUsers.toLocaleString()}</td>
+            <td class="highlight">${data.activeUsers.toLocaleString()}</td>
+            <td>${data.newUsersLast30Days.toLocaleString()}</td>
+            <td>${data.activeUserPercentage.toFixed(2)}%</td>
+        </tr>`;
+        document.querySelector('#user-stat-table tbody').innerHTML = tr;
+    });
+
+    fetchAndFill('/api/analytics/inventory-status', data => {
+        const tr = `<tr>
+            <td>${data.totalBooks.toLocaleString()}</td>
+            <td class="${data.lowStockBooks > 0 ? 'highlight' : ''}">${data.lowStockBooks.toLocaleString()}</td>
+            <td class="${data.outOfStockBooks > 0 ? 'highlight' : ''}">${data.outOfStockBooks.toLocaleString()}</td>
+            <td>${data.averageStock.toFixed(2)}</td>
+        </tr>`;
+        document.querySelector('#stock-table tbody').innerHTML = tr;
+    });
+
+    fetchAndFill('/api/analytics/category-performance', list => {
+        document.querySelector('#category-table tbody').innerHTML =
+            list.map(c => `<tr>
+                <td>${c.categoryName}</td>
+                <td>${c.bookCount.toLocaleString()}</td>
+                <td>${c.totalSales.toLocaleString()}</td>
+                <td class="highlight">￥${c.totalRevenue.toLocaleString()}</td>
+            </tr>`).join('');
+    });
+</script>
+
+</body>
+</html>

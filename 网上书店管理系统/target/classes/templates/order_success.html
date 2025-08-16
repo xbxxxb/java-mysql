@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>订单提交成功</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #c2d4d6;
+            color: #333;
+            text-align: center;
+        }
+
+        .success-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #98ccbb;
+        }
+
+        h1 {
+            color: #398d37;
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #98ccbb;
+        }
+
+        .order-info {
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+
+        .order-info p {
+            margin: 15px 0;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .order-info strong {
+            color: #329363;
+            font-size: 1.2rem;
+        }
+
+        .final-amount {
+            font-size: 1.5rem;
+            color: #e74c3c;
+            font-weight: bold;
+            margin: 25px 0;
+            padding: 15px;
+            background-color: #f8f8f8;
+            border-radius: 8px;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .back-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #68a530;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .back-link:hover {
+            background-color: #398d37;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            color: #68a530;
+            margin-bottom: 20px;
+            animation: bounce 1s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-20px);}
+            60% {transform: translateY(-10px);}
+        }
+    </style>
+</head>
+<body>
+<div class="success-container">
+    <div class="success-icon">🎉</div>
+    <h1>订单提交成功！</h1>
+
+    <div class="order-info">
+        <p><span>订单号：</span> <span th:text="${order.id}"></span></p>
+        <p><span>用户：</span> <span th:text="${order.user.username}"></span></p>
+        <p><span>总金额：</span> <span th:text="${order.totalAmount}"></span> 元</p>
+        <p><span>优惠金额：</span> <span th:text="${order.discountAmount}"></span> 元</p>
+        <p><span>状态：</span> <span th:text="${order.status}"></span></p>
+        <p><span>下单时间：</span> <span th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}"></span></p>
+
+        <div class="final-amount">
+            应付金额：<span th:text="${order.finalAmount}"></span> 元
+        </div>
+    </div>
+
+    <a th:href="@{/cart(userId=${order.user.id})}" class="back-link">返回购物车</a>
+</div>
+</body>
+</html>

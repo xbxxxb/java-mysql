@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>网上书店管理系统 - 首页</title>
+    <style>
+        body {
+            background: url('./images/beijingwang.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #C0D85B;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid #4F7F30;
+        }
+
+        .header {
+            position: relative;
+            margin-bottom: 30px;
+            height: 180px; /* 固定标题区域高度 */
+        }
+
+        .header-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            color: #336B2B;
+            margin: 0;
+            position: absolute;
+            top: 20px; /* 固定在顶部 */
+            left: 50%;
+            transform: translateX(-50%);
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+            width: 100%;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #B1D685;
+            margin: 15px 0;
+        }
+
+        .top-buttons {
+            text-align: right;
+            margin-bottom: 10px;
+        }
+
+        .top-buttons a {
+            font-size: 0.9rem;
+            color: white;
+            background-color: #11382F;
+            padding: 8px 14px;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            z-index: 2;
+            position: relative;
+        }
+
+        .top-buttons a:hover {
+            background-color: #2A8E65;
+            transform: translateY(-2px);
+        }
+
+        .nav {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            color: #488223;
+            background: #E8F7C9;
+            border-radius: 15px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(255,133,162,0.1);
+            border: 1px solid #FFE5E9;
+            height: 160px;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background: #DDF9C7;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255,133,162,0.2);
+        }
+
+        .btn-img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            margin-bottom: 5px;
+            flex-shrink: 0;
+        }
+
+        .btn-text {
+            font-size: 1.1rem;
+            margin-top: 5px;
+            width: 100%;
+            padding: 0 5px;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                height: 150px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+                top: 15px;
+            }
+
+            .btn {
+                height: 140px;
+            }
+
+            .btn-img {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="top-buttons">
+        <a href="/login">🏠 退出登录</a>
+    </div>
+
+    <div class="header">
+        <!-- 标题背景图 (建议尺寸：800×180像素) -->
+        <img class="header-bg" src="./images/wangshangshudian.jpg" alt="书店背景">
+        <h1>网上书店管理系统</h1>
+
+    </div>
+    <p style="font-size: 1.5rem; color: #4F7F30; font-weight: 600; margin: 20px 0;">请选择管理模块</p>
+
+
+    <div class="nav">
+        <a class="btn" href="/users">
+            <img class="btn-img" src="./images/yong.jpg" alt="用户管理">
+            <span class="btn-text">用户管理</span>
+        </a>
+        <a class="btn" href="/books">
+            <img class="btn-img" src="./images/tu.jpg" alt="图书管理">
+            <span class="btn-text">图书管理</span>
+        </a>
+        <a class="btn" href="/orders">
+            <img class="btn-img" src="./images/ding.jpg" alt="订单管理">
+            <span class="btn-text">订单管理</span>
+        </a>
+        <a class="btn" href="/cart">
+            <img class="btn-img" src="./images/gou.png" >
+            <span class="btn-text">购物车</span>
+        </a>
+        <a class="btn" href="/suppliers">
+            <img class="btn-img" src="./images/gong.jpg" alt="供应商">
+            <span class="btn-text">供应商</span>
+        </a>
+        <a class="btn" href="/analytics">
+            <img class="btn-img" src="./images/shu.jpg" alt="数据分析">
+            <span class="btn-text">数据分析</span>
+        </a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <title>图书与购物车 - 网上书店</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #c2d4d6;
+            color: #333;
+        }
+
+        h2 {
+            color: #398d37;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #98ccbb;
+        }
+
+        h3 {
+            color: #329363;
+            font-size: 1.5rem;
+            margin: 25px 0 15px;
+        }
+
+        .top-buttons {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .top-buttons button, .top-buttons a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #398d37;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .top-buttons button:hover, .top-buttons a:hover {
+            background-color: #68a530;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #98ccbb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        thead {
+            background-color: #329363;
+            color: white;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tbody tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .add-btn {
+            background-color: #68a530;
+            color: white;
+        }
+
+        .add-btn:hover {
+            background-color: #398d37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .remove-btn {
+            background-color: #e74c3c;
+            color: white;
+            margin-left: 10px;
+            padding: 8px 15px;
+        }
+
+        .remove-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .clear-btn {
+            background-color: #95a5a6;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .clear-btn:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .submit-btn {
+            background-color: #329363;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #287855;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .submit-btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #98ccbb;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        #selectedBooks {
+            margin: 20px 0;
+        }
+
+        #selectedBooks p {
+            background: #e9f7ef;
+            border: 1px solid #68a530;
+            border-radius: 30px;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #selectedBooks p strong {
+            color: #155724;
+        }
+
+        .empty-selected {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            border: 1px dashed #98ccbb;
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #329363;
+            margin-right: 15px;
+            display: inline-block;
+            width: 100px;
+        }
+
+        select, input[type="text"] {
+            padding: 10px;
+            border: 1px solid #98ccbb;
+            border-radius: 6px;
+            font-size: 15px;
+            width: 300px;
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: #68a530;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(104, 165, 48, 0.2);
+        }
+    </style>
+    <script>
+        let selectedBooks = new Map();
+
+        function addBook(id) {
+            const title = document.querySelector('#title_' + id).textContent.trim();
+            const author = document.querySelector('#author_' + id).textContent.trim();
+            const price = parseFloat(document.querySelector('#price_' + id).textContent.trim());
+            const stock = parseInt(document.querySelector('#stock_' + id).textContent.trim());
+            const qtyInput = document.getElementById('qty_' + id);
+            let qty = parseInt(qtyInput.value);
+
+            if (!qty || qty <= 0) {
+                alert('请输入有效的数量');
+                return;
+            }
+            if (qty > stock) {
+                alert('库存不足，当前库存为: ' + stock);
+                return;
+            }
+
+            if (selectedBooks.has(id)) {
+                let existing = selectedBooks.get(id);
+                let newQty = existing.quantity + qty;
+                if (newQty > stock) {
+                    alert('添加后数量超过库存，库存为: ' + stock);
+                    return;
+                }
+                selectedBooks.set(id, { title, author, price, stock, quantity: newQty });
+            } else {
+                selectedBooks.set(id, { title, author, price, stock, quantity: qty });
+            }
+            renderSelectedBooks();
+        }
+
+        function removeBook(id) {
+            selectedBooks.delete(id);
+            renderSelectedBooks();
+        }
+
+        function clearSelectedBooks() {
+            if(selectedBooks.size > 0 && confirm("确认要清空已选的所有图书吗？")) {
+                selectedBooks.clear();
+                renderSelectedBooks();
+            }
+        }
+
+        function renderSelectedBooks() {
+            const container = document.getElementById('selectedBooks');
+            container.innerHTML = '';
+
+            if(selectedBooks.size === 0) {
+                container.innerHTML = '<div class="empty-selected">还没有选中任何图书</div>';
+                document.getElementById('submitBtn').disabled = true;
+                return;
+            } else {
+                document.getElementById('submitBtn').disabled = false;
+            }
+
+            selectedBooks.forEach((book, id) => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <p>
+                        <span><strong>${book.title}</strong> （作者：${book.author}，单价：${book.price}元，数量：${book.quantity}）</span>
+                        <span>
+                            <button type="button" class="remove-btn" onclick="removeBook(${id})" title="移除该书">×</button>
+                            <input type="hidden" name="book_${id}" value="${id}" />
+                            <input type="hidden" name="quantity_${id}" value="${book.quantity}" />
+                        </span>
+                    </p>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        window.onload = () => {
+            renderSelectedBooks();
+        }
+    </script>
+</head>
+<body>
+<div class="top-buttons">
+    <button onclick="location.href='/user/user_index'">⬅ 返回首页</button>
+    <a th:href="@{/login}">🏠 退出登录</a>
+</div>
+
+<div class="section">
+    <h2>📚 所有图书</h2>
+    <form th:action="@{/user/order/checkout}" method="post" onsubmit="return selectedBooks.size > 0 || (alert('请至少添加一本书'), false);">
+        <div class="form-group">
+            <label for="shippingAddress">收货地址：</label>
+            <input type="text" id="shippingAddress" name="shippingAddress" placeholder="请输入收货地址" required/>
+        </div>
+
+        <div class="form-group">
+            <label for="paymentMethod">支付方式：</label>
+            <select id="paymentMethod" name="paymentMethod" required>
+                <option value="">请选择支付方式</option>
+                <option value="在线支付">在线支付</option>
+                <option value="货到付款">货到付款</option>
+            </select>
+        </div>
+
+        <input type="hidden" name="status" value="PENDING" />
+
+        <h3>📚 选择图书和数量</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>书名</th>
+                <th>作者</th>
+                <th>现价（元）</th>
+                <th>库存</th>
+                <th>数量</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="book : ${bookList}">
+                <td th:text="${book.title}" th:id="'title_' + ${book.id}"></td>
+                <td th:text="${book.author}" th:id="'author_' + ${book.id}"></td>
+                <td th:text="${book.currentPrice}" th:id="'price_' + ${book.id}"></td>
+                <td th:text="${book.stock}" th:id="'stock_' + ${book.id}"></td>
+                <td><input type="number" min="1" value="1" th:id="'qty_' + ${book.id}" /></td>
+                <td><button type="button" class="add-btn" th:onclick="'addBook(' + ${book.id} + ')'">添加</button></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h3>🧾 当前选中图书</h3>
+        <button type="button" class="clear-btn" onclick="clearSelectedBooks()">一键清空已选图书</button>
+        <div id="selectedBooks"></div>
+
+        <button type="submit" id="submitBtn" class="submit-btn">提交订单</button>
+    </form>
+</div>
+
+</body>
+</html>

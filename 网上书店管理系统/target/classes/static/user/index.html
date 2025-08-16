@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户首页 - 网上书店</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #c2d4d6;
+            color: #333;
+        }
+
+        h1 {
+            color: #398d37;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #98ccbb;
+        }
+
+        h2 {
+            color: #329363;
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+        }
+
+        .top-buttons {
+            margin-bottom: 25px;
+        }
+
+        .top-buttons a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #398d37;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .top-buttons a:hover {
+            background-color: #68a530;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .user-section {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #98ccbb;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        thead {
+            background-color: #329363;
+            color: white;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tbody tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .add-btn {
+            background-color: #68a530;
+            color: white;
+        }
+
+        .add-btn:hover {
+            background-color: #398d37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .update-btn {
+            background-color: #ffc107;
+            color: #333;
+            margin-left: 10px;
+        }
+
+        .update-btn:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .remove-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .remove-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .checkout-btn {
+            background-color: #329363;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+        }
+
+        .checkout-btn:hover {
+            background-color: #287855;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #98ccbb;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .inline-form {
+            display: inline-block;
+            margin: 0;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f1f8e9 !important;
+        }
+
+        .total-row td {
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+
+<h1>欢迎来到网上书店！</h1>
+<div class="top-buttons">
+    <a th:href="@{/login}">🏠 退出登录</a>
+</div>
+
+<div class="user-section">
+    <h2>📚 浏览图书</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>书名</th>
+            <th>作者</th>
+            <th>现价</th>
+            <th>库存</th>
+            <th>数量</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="book : ${bookList}">
+            <td th:text="${book.title}"></td>
+            <td th:text="${book.author}"></td>
+            <td th:text="${book.currentPrice}"></td>
+            <td th:text="${book.stock}"></td>
+            <td>
+                <input type="number" value="1" min="1" th:attr="max=${book.stock}"
+                       th:name="quantity" th:id="'qty_' + ${book.id}" />
+            </td>
+            <td>
+                <form th:action="@{/cart/add}" method="post" class="inline-form">
+                    <input type="hidden" name="userId" th:value="${userId}" />
+                    <input type="hidden" name="bookId" th:value="${book.id}" />
+                    <input type="hidden" name="quantity" th:attr="value=document.getElementById('qty_' + ${book.id}).value" />
+                    <button type="submit" class="add-btn">加入购物车</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="user-section">
+    <h2>🛒 我的购物车</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>书名</th>
+            <th>数量</th>
+            <th>单价</th>
+            <th>小计</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${cart.items}">
+            <td th:text="${item.book.title}"></td>
+            <td>
+                <form th:action="@{/cart/update}" method="post" class="inline-form">
+                    <input type="hidden" name="userId" th:value="${userId}" />
+                    <input type="hidden" name="bookId" th:value="${item.book.id}" />
+                    <input type="number" name="quantity" th:value="${item.quantity}" min="0" />
+                    <button type="submit" class="update-btn">更新</button>
+                </form>
+            </td>
+            <td th:text="${item.unitPrice}"></td>
+            <td th:text="${item.totalPrice}"></td>
+            <td>
+                <form th:action="@{/cart/remove}" method="post" class="inline-form"
+                      onsubmit="return confirm('确认删除该项？');">
+                    <input type="hidden" name="userId" th:value="${userId}" />
+                    <input type="hidden" name="bookId" th:value="${item.book.id}" />
+                    <button type="submit" class="remove-btn">删除</button>
+                </form>
+            </td>
+        </tr>
+        <tr class="total-row">
+            <td colspan="3" style="text-align: right;">总计:</td>
+            <td th:text="${cart.finalAmount}"></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <form th:action="@{/orders/createFromCart}" method="post">
+        <input type="hidden" name="userId" th:value="${userId}" />
+        <button type="submit" class="checkout-btn">提交订单</button>
+    </form>
+</div>
+
+<div class="user-section">
+    <h2>📦 我的订单</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>订单ID</th>
+            <th>金额</th>
+            <th>状态</th>
+            <th>下单时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order : ${orderList}">
+            <td th:text="${order.id}"></td>
+            <td th:text="${order.finalAmount}"></td>
+            <td th:text="${order.status}"></td>
+            <td th:text="${#dates.format(order.orderDate, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

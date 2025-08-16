@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>购物车</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #c2d4d6;
+            color: #333;
+        }
+
+        h1 {
+            color: #398d37;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #98ccbb;
+        }
+
+        h2 {
+            color: #329363;
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+        }
+
+        .top-buttons {
+            margin-bottom: 25px;
+        }
+
+        .top-buttons a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #398d37;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .top-buttons a:hover {
+            background-color: #68a530;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .cart-container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #98ccbb;
+        }
+
+        .add-form {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 10px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #329363;
+            margin-right: 15px;
+        }
+
+        select, input[type="number"] {
+            padding: 10px;
+            margin-right: 15px;
+            border: 1px solid #98ccbb;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        select {
+            width: 300px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        thead {
+            background-color: #329363;
+            color: white;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tbody tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+
+        .btn-add {
+            background-color: #68a530;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background-color: #398d37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-update {
+            background-color: #ffc107;
+            color: #333;
+            margin-left: 10px;
+        }
+
+        .btn-update:hover {
+            background-color: #e0a800;
+            transform: translateY(-2px);
+        }
+
+        .btn-remove {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-remove:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .summary {
+            margin: 25px 0;
+            padding: 20px;
+            background-color: #f8f8f8;
+            border-radius: 10px;
+            font-size: 1.1rem;
+        }
+
+        .summary p {
+            margin: 10px 0;
+        }
+
+        .summary strong {
+            color: #e74c3c;
+            font-size: 1.3rem;
+        }
+
+        .action-buttons {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-clear {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background-color: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .btn-checkout {
+            background-color: #329363;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+        }
+
+        .btn-checkout:hover {
+            background-color: #287855;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="cart-container">
+    <h1>🛒 我的购物车</h1>
+
+    <div class="top-buttons">
+        <a th:href="@{/}">🏠 返回首页</a>
+    </div>
+
+    <!-- 添加图书表单 -->
+    <div class="add-form">
+        <h2>添加图书</h2>
+        <form id="addForm">
+            <label for="bookSelect">选择图书：</label>
+            <select id="bookSelect" name="bookId" required>
+                <option th:each="book : ${bookList}" th:value="${book.id}" th:text="${book.title}"></option>
+            </select>
+
+            <label for="quantityInput">数量：</label>
+            <input type="number" id="quantityInput" name="quantity" value="1" min="1" required />
+
+            <button type="submit" class="btn-add">添加到购物车</button>
+        </form>
+    </div>
+
+    <h2>📋 当前购物车</h2>
+
+    <table>
+        <thead>
+        <tr>
+            <th>图书名</th>
+            <th>单价 (元)</th>
+            <th>数量</th>
+            <th>小计 (元)</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${cart.items}">
+            <td th:text="${item.book.title}">图书名</td>
+            <td th:text="${item.unitPrice}">单价</td>
+            <td>
+                <input type="number" min="1" th:value="${item.quantity}"
+                       data-bookid="${item.book.id}" class="qtyInput" />
+                <button class="btn-update" onclick="updateQuantity(event, this)">修改</button>
+            </td>
+            <td th:text="${item.totalPrice}">小计</td>
+            <td>
+                <button class="btn-remove" th:attr="data-bookid=${item.book.id}"
+                        onclick="removeItem(event, this)">移除</button>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(cart.items)}">
+            <td colspan="5" class="empty-cart">购物车为空，请添加图书</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- 总计信息 -->
+    <div class="summary">
+        <p>总金额：<span th:text="${cart.totalAmount}">0</span> 元</p>
+        <p>总优惠：<span th:text="${cart.discountAmount}">0</span> 元</p>
+        <p>应付金额：<strong th:text="${cart.finalAmount}">0</strong> 元</p>
+    </div>
+
+    <div class="action-buttons">
+        <button class="btn-clear" onclick="clearCart()">清空购物车</button>
+        <button class="btn-checkout" onclick="checkout()">结账生成订单</button>
+    </div>
+</div>
+
+<script>
+    const userId = /*[[${userId}]]*/ '1';  // Thymeleaf 解析 userId
+
+    // 添加到购物车
+    document.getElementById('addForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const bookId = document.getElementById('bookSelect').value;
+        const quantity = document.getElementById('quantityInput').value;
+        fetch(`/api/cart/${userId}/add?bookId=${bookId}&quantity=${quantity}`, {
+            method: 'POST'
+        }).then(resp => {
+            if (!resp.ok) throw new Error('添加失败');
+            return resp.json();
+        }).then(data => {
+            location.reload();
+        }).catch(err => alert(err.message));
+    });
+
+    // 修改数量
+    function updateQuantity(event, btn) {
+        event.preventDefault();
+        const tr = btn.closest('tr');
+        const input = tr.querySelector('.qtyInput');
+        const quantity = input.value;
+        const bookId = input.getAttribute('data-bookid');
+        fetch(`/api/cart/${userId}/update?bookId=${bookId}&quantity=${quantity}`, {
+            method: 'POST'
+        }).then(resp => {
+            if (!resp.ok) throw new Error('修改失败');
+            return resp.json();
+        }).then(data => {
+            location.reload();
+        }).catch(err => alert(err.message));
+    }
+
+    // 移除商品
+    function removeItem(event, btn) {
+        event.preventDefault();
+        const bookId = btn.getAttribute('data-bookid');
+        if (!confirm('确定从购物车移除该商品？')) return;
+        fetch(`/api/cart/${userId}/remove?bookId=${bookId}`, {
+            method: 'DELETE'
+        }).then(resp => {
+            if (!resp.ok) throw new Error('移除失败');
+            return resp.json();
+        }).then(data => {
+            location.reload();
+        }).catch(err => alert(err.message));
+    }
+
+    // 清空购物车
+    function clearCart() {
+        if (!confirm('确定清空购物车？')) return;
+        fetch(`/api/cart/${userId}/clear`, {
+            method: 'POST'
+        }).then(resp => {
+            if (!resp.ok) throw new Error('清空失败');
+            return resp.text();
+        }).then(() => {
+            location.reload();
+        }).catch(err => alert(err.message));
+    }
+
+    // 结账生成订单
+    function checkout() {
+        if (!confirm('确定要结账吗？')) return;
+        fetch(`/api/orders/createFromCart?userId=${userId}`, {
+            method: 'POST'
+        }).then(resp => {
+            if (!resp.ok) throw new Error('结账失败');
+            return resp.text();
+        }).then(text => {
+            alert('结账成功！');
+            location.reload();
+        }).catch(err => alert(err.message));
+    }
+</script>
+
+</body>
+</html>

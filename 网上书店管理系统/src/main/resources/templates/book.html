@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>图书管理</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #c2d4d6;
+            color: #333;
+        }
+
+        h1 {
+            color: #398d37;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #98ccbb;
+        }
+
+        h2 {
+            color: #329363;
+            font-size: 1.8rem;
+            margin: 25px 0 15px;
+        }
+
+        .top-buttons {
+            margin-bottom: 25px;
+        }
+
+        .top-buttons a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #398d37;
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .top-buttons a:hover {
+            background-color: #68a530;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .book-form {
+            background-color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 2px solid #98ccbb;
+            margin-bottom: 30px;
+            width: 500px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+            font-weight: 600;
+            color: #329363;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 350px;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #98ccbb;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: #68a530;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(104, 165, 48, 0.2);
+        }
+
+        button {
+            padding: 12px 25px;
+            background-color: #68a530;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #398d37;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        thead {
+            background-color: #329363;
+            color: white;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tbody tr:hover {
+            background-color: #e8f5e9;
+        }
+
+        .action-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .action-links a {
+            color: #329363;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-links a:hover {
+            color: white;
+            background-color: #68a530;
+            text-decoration: none;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #98ccbb, transparent);
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📚 图书管理</h1>
+
+<div class="top-buttons">
+    <a th:href="@{/}">🏠 返回首页</a>
+</div>
+
+<!-- 添加/编辑图书表单 -->
+<form class="book-form" th:action="@{/books/save}" method="post" th:object="${bookForm}">
+    <input type="hidden" th:field="*{id}" />
+
+    <div>
+        <label for="title">书名：</label>
+        <input type="text" id="title" th:field="*{title}" required />
+    </div>
+
+    <div>
+        <label for="author">作者：</label>
+        <input type="text" id="author" th:field="*{author}" required />
+    </div>
+
+    <div>
+        <label for="isbn">ISBN：</label>
+        <input type="text" id="isbn" th:field="*{isbn}" required />
+    </div>
+
+    <div>
+        <label for="originalPrice">原价：</label>
+        <input type="number" step="0.01" id="originalPrice" th:field="*{originalPrice}" required />
+    </div>
+
+    <div>
+        <label for="currentPrice">现价：</label>
+        <input type="number" step="0.01" id="currentPrice" th:field="*{currentPrice}" required />
+    </div>
+
+    <div>
+        <label for="stock">库存：</label>
+        <input type="number" id="stock" th:field="*{stock}" required />
+    </div>
+
+    <button type="submit" th:text="${bookForm.id == null} ? '添加图书' : '更新图书'"></button>
+</form>
+
+<hr/>
+
+<!-- 图书列表展示 -->
+<h2>📄 图书列表</h2>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>书名</th>
+        <th>作者</th>
+        <th>ISBN</th>
+        <th>原价</th>
+        <th>现价</th>
+        <th>库存</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${bookList}">
+        <td th:text="${book.id}"></td>
+        <td th:text="${book.title}"></td>
+        <td th:text="${book.author}"></td>
+        <td th:text="${book.isbn}"></td>
+        <td th:text="${book.originalPrice}"></td>
+        <td th:text="${book.currentPrice}"></td>
+        <td th:text="${book.stock}"></td>
+        <td class="action-links">
+            <a th:href="@{'/books?editId=' + ${book.id}}">✏️ 编辑</a>
+            <a th:href="@{'/books/delete/' + ${book.id}}"
+               onclick="return confirm('确定要删除这本书吗？')">🗑️ 删除</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
